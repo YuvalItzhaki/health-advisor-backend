@@ -4,6 +4,8 @@ const connectDB = require('./config/db');
 const cors = require('cors');
 const app = express();
 const authRoutes = require('./routes/auth');
+const healthRouter = require('./routes/health');
+
 require('dotenv').config();
 
 
@@ -25,6 +27,8 @@ app.use(cors({
   }));
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+app.use('/api/health', healthRouter);
+
 
 // // Connect to MongoDB
 // mongoose.connect('mongodb://localhost:27017/health-advisor', { useNewUrlParser: true, useUnifiedTopology: true });
