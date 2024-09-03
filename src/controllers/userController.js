@@ -35,6 +35,8 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
+  console.log('Register endpoint hit');
+
   const { name, email, password } = req.body;
 
   console.log('Registering user:', { name, email, password });

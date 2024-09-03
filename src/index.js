@@ -5,6 +5,8 @@ const cors = require('cors');
 const app = express();
 const authRoutes = require('./routes/auth');
 const healthRouter = require('./routes/health');
+const userRoutes = require('./routes/user');
+
 
 require('dotenv').config();
 
@@ -28,6 +30,8 @@ app.use(cors({
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/health', healthRouter);
+app.use('/api/users', userRoutes);
+
 
 
 // // Connect to MongoDB

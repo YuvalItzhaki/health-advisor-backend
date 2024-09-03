@@ -6,10 +6,10 @@ const router = express.Router();
 
 // Register Route
 router.post('/register', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, name, age, gender, medicalHistory } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ email, password: hashedPassword });
+    const newUser = await User.create({ email, password: hashedPassword, name, age, gender, medicalHistory });
     res.status(201).json(newUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -29,7 +29,12 @@ router.post('/login', async (req, res) => {
         if (user && await bcrypt.compare(password, user.password)) {
             // Password is correct, generate a token or return user data
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-            res.json({ token });
+            // res.json({ token });
+            res.json({
+              _id: user._id,
+              name: user.name,
+              email: user.email,
+            })
         } else {
             console.log('Invalid credentials'); // Debugging log
             res.status(400).json({ message: 'Invalid credentials' });
