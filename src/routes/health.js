@@ -48,6 +48,24 @@ router.get('/weight/:userId', async (req, res) => {
     }
 });
 
+router.put('/weight/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const { weight } = req.body;
+  
+    try {
+      // Assuming userId is a field in the document, not the _id
+      const healthData = await HealthData.findOneAndUpdate({ userId }, { weight }, { new: true });
+  
+      if (!healthData) {
+        return res.status(404).json({ message: 'Health data not found' });
+      }
+  
+      res.json(healthData);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+  
   router.put('/weight/:id', async (req, res) => {
     const { id } = req.params;
     const { weight } = req.body;
@@ -94,6 +112,24 @@ router.get('/height/:userId', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+router.put('/height/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const { height } = req.body;
+  
+    try {
+      // Assuming userId is a field in the document, not the _id
+      const healthData = await HealthData.findOneAndUpdate({ userId }, { height }, { new: true });
+  
+      if (!healthData) {
+        return res.status(404).json({ message: 'Health data not found' });
+      }
+  
+      res.json(healthData);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
 
   router.put('/height/:id', async (req, res) => {
     const { id } = req.params;
