@@ -78,6 +78,32 @@ router.put('/weight/:userId', async (req, res) => {
     }
   });
 
+  // Backend route to update both weight and height
+router.put('/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const { weight, height } = req.body;
+    console.log('userId is: ', userId)
+  
+    try {
+      const updatedHealthData = await HealthData.findByIdAndUpdate(
+        userId,
+        { weight, height },
+        { new: true } // Return the updated document
+      );
+      
+      if (!updatedHealthData) {
+        return res.status(404).json({ message: 'Health data not found' });
+      }
+  
+      res.json({
+        weights: updatedHealthData.weights || [], // Assuming you store an array of weights
+        heights: updatedHealthData.heights || [], // Assuming you store an array of heights
+      });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
   router.delete('/weight/:id', async (req, res) => {
     const { id } = req.params;
   
