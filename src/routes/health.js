@@ -3,10 +3,11 @@ const router = express.Router();
 const HealthData = require('../models/healthData'); 
 
 router.post('/setup', async (req, res) => {
-    const { userId, weight, height, age, gender } = req.body;
+    const { userId, weights, heights, age, gender } = req.body;
     
     try {
-      const healthData = new HealthData({ userId, weight, height, age, gender  });
+      const healthData = new HealthData({ userId, weights, heights, age, gender  });
+      console.log('healthData is', healthData)
       await healthData.save();
       res.status(201).json(healthData);
     } catch (err) {
@@ -37,7 +38,7 @@ router.post('/setup', async (req, res) => {
 //     }
 //   });
 
-router.get('/weight/:userId', async (req, res) => {
+router.get('/weights/:userId', async (req, res) => {
     const { userId } = req.params;
     
     try {
@@ -48,35 +49,50 @@ router.get('/weight/:userId', async (req, res) => {
     }
 });
 
-router.put('/weight/:userId', async (req, res) => {
-    const { userId } = req.params;
-    const { weight } = req.body;
+// router.put('/weight/:userId', async (req, res) => {
+//     const { userId } = req.params;
+//     const { weight } = req.body;
   
-    try {
-      // Assuming userId is a field in the document, not the _id
-      const healthData = await HealthData.findOneAndUpdate({ userId }, { weight }, { new: true });
+//     try {
+//       // Assuming userId is a field in the document, not the _id
+//       const healthData = await HealthData.findOneAndUpdate({ userId }, { weight }, { new: true });
   
-      if (!healthData) {
-        return res.status(404).json({ message: 'Health data not found' });
-      }
+//       if (!healthData) {
+//         return res.status(404).json({ message: 'Health data not found' });
+//       }
   
-      res.json(healthData);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  });
+//       res.json(healthData);
+//     } catch (err) {
+//       res.status(500).json({ message: err.message });
+//     }
+//   });
   
-  router.put('/weight/:id', async (req, res) => {
-    const { id } = req.params;
-    const { weight } = req.body;
+//   router.put('/weight/:id', async (req, res) => {
+//     const { id } = req.params;
+//     const { weight } = req.body;
     
-    try {
-      const healthData = await HealthData.findByIdAndUpdate(id, { weight }, { new: true });
-      res.json(healthData);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  });
+//     try {
+//       const healthData = await HealthData.findByIdAndUpdate(id, { weight }, { new: true });
+//       res.json(healthData);
+//     } catch (err) {
+//       res.status(500).json({ message: err.message });
+//     }
+//   });
+router.put('/weights/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { weights } = req.body;
+
+  try {
+    const updatedData = await HealthData.findOneAndUpdate(
+      { userId },
+      { $push: { weights: weights } }, // Add new weight to the array
+      { new: true } // Return the updated document
+    );
+    res.status(200).json(updatedData);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating weight' });
+  }
+});
 
   // Backend route to update both weight and height
 router.put('/:userId', async (req, res) => {
@@ -128,7 +144,7 @@ router.put('/:userId', async (req, res) => {
 //     }
 //   });
 
-router.get('/height/:userId', async (req, res) => {
+router.get('/heights/:userId', async (req, res) => {
     const { userId } = req.params;
     
     try {
@@ -139,35 +155,51 @@ router.get('/height/:userId', async (req, res) => {
     }
 });
 
-router.put('/height/:userId', async (req, res) => {
-    const { userId } = req.params;
-    const { height } = req.body;
+// router.put('/height/:userId', async (req, res) => {
+//     const { userId } = req.params;
+//     const { height } = req.body;
   
-    try {
-      // Assuming userId is a field in the document, not the _id
-      const healthData = await HealthData.findOneAndUpdate({ userId }, { height }, { new: true });
+//     try {
+//       // Assuming userId is a field in the document, not the _id
+//       const healthData = await HealthData.findOneAndUpdate({ userId }, { height }, { new: true });
   
-      if (!healthData) {
-        return res.status(404).json({ message: 'Health data not found' });
-      }
+//       if (!healthData) {
+//         return res.status(404).json({ message: 'Health data not found' });
+//       }
   
-      res.json(healthData);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  });
+//       res.json(healthData);
+//     } catch (err) {
+//       res.status(500).json({ message: err.message });
+//     }
+//   });
 
-  router.put('/height/:id', async (req, res) => {
-    const { id } = req.params;
-    const { height } = req.body;
+//   router.put('/height/:id', async (req, res) => {
+//     const { id } = req.params;
+//     const { height } = req.body;
     
-    try {
-      const healthData = await HealthData.findByIdAndUpdate(id, { height }, { new: true });
-      res.json(healthData);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  });
+//     try {
+//       const healthData = await HealthData.findByIdAndUpdate(id, { height }, { new: true });
+//       res.json(healthData);
+//     } catch (err) {
+//       res.status(500).json({ message: err.message });
+//     }
+//   });
+
+router.put('/heights/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { heights } = req.body;
+
+  try {
+    const updatedData = await HealthData.findOneAndUpdate(
+      { userId },
+      { $push: { heights: heights } }, // Add new height to the array
+      { new: true } // Return the updated document
+    );
+    res.status(200).json(updatedData);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating height' });
+  }
+});
 
   router.delete('/height/:id', async (req, res) => {
     const { id } = req.params;
