@@ -2,8 +2,18 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
+  googleId: {
+    type: String, 
+    sparse: true,
+    default: undefined,
+  },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: {
+    type: String,
+    required: function() {
+      return !this.googleId; // Password is required only if not using Google OAuth
+    },
+  },
   name: { type: String },
   age: Number,
   gender: String,

@@ -13,6 +13,9 @@ router.post('/register', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ email, password: hashedPassword, name, age, gender, medicalHistory });
+    const token = generateAuthToken(newUser); // Your token generation logic
+    console.log('token for register user: ', token)
+    res.json({ token }); // Send token to client
     res.status(201).json(newUser);
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -57,7 +57,7 @@ const registerUser = asyncHandler(async (req, res) => {
     res.cookie('authToken', token, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production', // Set true only in production
-      sameSite: 'strict',
+      sameSite: 'Lax',
       // maxAge: 24 * 60 * 60 * 1000, // Token expires in 1 day (adjustable)
     });
 

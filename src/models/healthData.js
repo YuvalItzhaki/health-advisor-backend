@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const healthDataSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Optional for Google users
+  googleId: { type: String, sparse: true, default: undefined }, // Optional for users who log in with Google
   weights: [
     {
       value: { type: Number, required: true },
@@ -19,7 +20,7 @@ const healthDataSchema = new mongoose.Schema({
   bloodPressure: String,
   heartRate: Number,
   cholesterolLevel: Number,
-}, { timestamps: true }); // This adds createdAt and updatedAt automatically
+}, { timestamps: true });
 
 const HealthData = mongoose.model('HealthData', healthDataSchema);
 
