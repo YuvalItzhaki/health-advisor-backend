@@ -130,7 +130,7 @@ router.get('/google-fit-data', passport.authenticate('session'), async (req, res
     console.log('accessToken is:', accessToken); // Debug to ensure token is correct
 
     // Request data from Google Fit API
-    const response = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataSources', {
+    const response = await axios.get('https://www.googleapis.com/fitness/v1/resourcePath?parameters', {
       headers: {
         'Authorization': `Bearer ${accessToken}` // Corrected the template literal
       },

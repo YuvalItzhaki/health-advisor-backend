@@ -43,7 +43,7 @@ passport.use(
 // Serialize and deserialize user for session management
 passport.serializeUser((user, done) => {
   console.log('user from serializeUser: ', user.id)
-  done(null, user._id.valueOf());  // Ensuring the user ID is stored in session
+  done(null, user._id);  // Ensuring the user ID is stored in session
   
 });
 

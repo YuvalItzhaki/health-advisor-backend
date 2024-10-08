@@ -8,27 +8,17 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: 'http://localhost:5001/api/auth/google/callback',
-      scope: [
-        'profile', 
-        'email',
-        'https://www.googleapis.com/auth/fitness.activity.read',
-        'https://www.googleapis.com/auth/fitness.body.read',
-        'https://www.googleapis.com/auth/fitness.heart_rate.read'
-      ]
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const existingUser = await User.findOne({ googleId: profile.id });
         if (existingUser) {
-          existingUser.accessToken = accessToken; // Save accessToken
-          await existingUser.save();
           return done(null, existingUser);
         }
         const newUser = new User({
           googleId: profile.id,
           // displayName: profile.displayName,
           email: profile.emails[0].value,
-          accessToken,
         });
         await newUser.save();
         done(null, newUser);

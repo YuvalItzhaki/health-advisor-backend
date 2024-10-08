@@ -130,17 +130,19 @@ router.get('/google-fit-data', passport.authenticate('session'), async (req, res
     console.log('accessToken is:', accessToken); // Debug to ensure token is correct
 
     // Request data from Google Fit API
-    const response = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataSources', {
+    const response = await axios.get('https://www.googleapis.com/auth/fitness.activity.read', {
       headers: {
         'Authorization': `Bearer ${accessToken}` // Corrected the template literal
       },
       params: {
         "aggregateBy": [{
-          "dataTypeName": "com.google.step_count.delta"
+          "dataTypeName": "com.google.step_count.delta",
+          "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas"
+
         }],
         "bucketByTime": { "durationMillis": 86400000 },
-        "startTimeMillis": new Date('2024-01-01').getTime(),
-        "endTimeMillis": new Date().getTime()
+        "startTimeMillis": 1696636800000,  // start of the day in milliseconds
+        "endTimeMillis": 1696723200000 
       }
     });
 

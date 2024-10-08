@@ -3,7 +3,6 @@ const router = express.Router();
 const HealthData = require('../models/healthData'); 
 const { authenticateUser } = require('../middlewares/authMiddleware');
 const passport = require('passport');
-const axios = require('axios');
 
 
 
@@ -118,7 +117,7 @@ router.get('/google/:googleId', async (req, res) => {
 });
 
 // Example route for fetching Google Fit data
-router.get('/google-fit-data', passport.authenticate('session'), async (req, res) => {
+router.get('/google-fit-data', passport.authenticate('session'),async (req, res) => {
   try {
     // Check if user is authenticated and has accessToken
     console.log('User object for google-fit-data:', req.user);
@@ -130,9 +129,9 @@ router.get('/google-fit-data', passport.authenticate('session'), async (req, res
     console.log('accessToken is:', accessToken); // Debug to ensure token is correct
 
     // Request data from Google Fit API
-    const response = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataSources', {
+    const response = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
       headers: {
-        'Authorization': `Bearer ${accessToken}` // Corrected the template literal
+        'Authorization': `Bearer ${accessToken}` // Pass the token here
       },
       params: {
         "aggregateBy": [{

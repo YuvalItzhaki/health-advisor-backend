@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const HealthData = require('../models/healthData'); 
 const { authenticateUser } = require('../middlewares/authMiddleware');
-const passport = require('passport');
-const axios = require('axios');
-
 
 
 router.post('/setup', async (req, res) => {
@@ -117,22 +114,16 @@ router.get('/google/:googleId', async (req, res) => {
   }
 });
 
-// Example route for fetching Google Fit data
-router.get('/google-fit-data', passport.authenticate('session'), async (req, res) => {
+router.get('/google-fit-data', async (req, res) => {
+  console.log('User:', req.user);
+
+  const accessToken = req.user.accessToken; // Retrieve the token from user session or DB
+  console.log('accessToken is:', accessToken)
+
   try {
-    // Check if user is authenticated and has accessToken
-    console.log('User object for google-fit-data:', req.user);
-    if (!req.user || !req.user.accessToken) {
-      return res.status(401).json({ message: 'Unauthorized: No access token' });
-    }
-
-    const accessToken = req.user.accessToken; // Retrieve the token from user session or DB
-    console.log('accessToken is:', accessToken); // Debug to ensure token is correct
-
-    // Request data from Google Fit API
-    const response = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataSources', {
+    const response = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
       headers: {
-        'Authorization': `Bearer ${accessToken}` // Corrected the template literal
+        'Authorization': `Bearer ${accessToken}`
       },
       params: {
         "aggregateBy": [{
@@ -143,39 +134,12 @@ router.get('/google-fit-data', passport.authenticate('session'), async (req, res
         "endTimeMillis": new Date().getTime()
       }
     });
-
-    // Send response back to client
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching Google Fit data:', error);
     res.status(500).send('Error fetching Google Fit data');
   }
 });
-
-router.get('/get-access-token', passport.authenticate('session'), async (req, res) => {
-  try {
-    // Ensure user is authenticated and accessToken exists
-    // console.log('user is: ', req)
-    console.log('User object:', req.user);
-    if (!req.user) {
-      console.error('No user found in request');
-      return res.status(401).json({ message: 'Unauthorized: No user in session' });
-    }
-
-    if (!req.user.accessToken) {
-      console.error('No access token found for user');
-      return res.status(401).json({ message: 'Unauthorized: No access token' });
-    }
-
-    // Send back the access token
-    res.json({ accessToken: req.user.accessToken });
-  } catch (error) {
-    console.error('Error retrieving access token:', error);
-    res.status(500).json({ message: 'Error retrieving access token' });
-  }
-});
-
-
 
 
 router.get('/:userType/:id', authenticateUser, async (req, res) => {

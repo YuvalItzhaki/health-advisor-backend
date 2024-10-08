@@ -8,8 +8,8 @@ const healthRouter = require('./routes/health');
 const userRoutes = require('./routes/user');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const passport = require('./config/passport'); // Import the configured passport
-// const passport = require('passport');
+// const passport = require('./config/passport'); // Import the configured passport
+const passport = require('passport');
 
 
 
@@ -36,7 +36,7 @@ app.use(cors({
 app.use(session({
   secret: process.env.GOOGLE_CLIENT_SECRET || 'your_session_secret',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   cookie: { secure: false } // Set to true if using HTTPS
 
 }));

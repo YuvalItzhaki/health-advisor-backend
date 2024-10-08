@@ -20,15 +20,12 @@ passport.use(
       try {
         const existingUser = await User.findOne({ googleId: profile.id });
         if (existingUser) {
-          existingUser.accessToken = accessToken; // Save accessToken
-          await existingUser.save();
           return done(null, existingUser);
         }
         const newUser = new User({
           googleId: profile.id,
           // displayName: profile.displayName,
           email: profile.emails[0].value,
-          accessToken,
         });
         await newUser.save();
         done(null, newUser);

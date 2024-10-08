@@ -129,23 +129,32 @@ router.get('/google-fit-data', passport.authenticate('session'), async (req, res
     const accessToken = req.user.accessToken; // Retrieve the token from user session or DB
     console.log('accessToken is:', accessToken); // Debug to ensure token is correct
 
-    // Request data from Google Fit API
+    // Request data from Google Fit API, including both cumulative and delta step counts
     const response = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataSources', {
       headers: {
-        'Authorization': `Bearer ${accessToken}` // Corrected the template literal
+        'Authorization': `Bearer ${accessToken}`
       },
       params: {
-        "aggregateBy": [{
-          "dataTypeName": "com.google.step_count.delta"
-        }],
+        "aggregateBy": [
+          {
+            "dataTypeName": "com.google.step_count.delta",
+            "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas"
+          },
+          {
+            "dataTypeName": "com.google.step_count.cumulative",
+            "dataSourceId": "derived:com.google.step_count.cumulative:com.google.android.gms:merge_step_deltas"
+          }
+        ],
         "bucketByTime": { "durationMillis": 86400000 },
-        "startTimeMillis": new Date('2024-01-01').getTime(),
-        "endTimeMillis": new Date().getTime()
+        "startTimeMillis": 1696636800000 - 7 * 86400000, // Start of the week in milliseconds
+        "endTimeMillis": 1696723200000
       }
     });
+    console.log('Response data:', response.data);
 
-    // Send response back to client
-    res.json(response.data);
+    // Extract and return the cumulative step count
+    const cumulativeSteps = response.data.bucket.dataset[1].point[0].value[0].intVal;
+    res.json({ cumulativeSteps });
   } catch (error) {
     console.error('Error fetching Google Fit data:', error);
     res.status(500).send('Error fetching Google Fit data');

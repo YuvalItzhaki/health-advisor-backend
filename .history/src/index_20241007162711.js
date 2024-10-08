@@ -8,8 +8,8 @@ const healthRouter = require('./routes/health');
 const userRoutes = require('./routes/user');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const passport = require('./config/passport'); // Import the configured passport
-// const passport = require('passport');
+// const passport = require('./config/passport'); // Import the configured passport
+const passport = require('passport');
 
 
 
@@ -36,9 +36,7 @@ app.use(cors({
 app.use(session({
   secret: process.env.GOOGLE_CLIENT_SECRET || 'your_session_secret',
   resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false } // Set to true if using HTTPS
-
+  saveUninitialized: true,
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -51,19 +49,13 @@ app.use('/api/health', healthRouter);
 app.use('/api/users', userRoutes);
 app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', "script-src 'self' https://apis.google.com; object-src 'none'");
-  res.removeHeader('Cross-Origin-Opener-Policy');
-  res.removeHeader('Cross-Origin-Embedder-Policy');
-  console.log('Session:', req.session);
-  console.log('User1111:', req.user); 
   next();
 });
-// app.use((req, res, next) => {
-//   res.removeHeader('Cross-Origin-Opener-Policy');
-//   res.removeHeader('Cross-Origin-Embedder-Policy');
-//   console.log('Session:', req.session);
-//   console.log('User1111:', req.user); 
-//   next();
-// });
+app.use((req, res, next) => {
+  res.removeHeader('Cross-Origin-Opener-Policy');
+  res.removeHeader('Cross-Origin-Embedder-Policy');
+  next();
+});
 
 
 

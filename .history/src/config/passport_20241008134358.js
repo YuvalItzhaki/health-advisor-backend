@@ -13,7 +13,7 @@ passport.use(
       try {
         // Check if the user already exists in the database
         let user = await User.findOne({ googleId: profile.id });
-        console.log('user from GoogleStrategy is: ', user._id.valueOf())
+        console.log('user from GoogleStrategy is: ', user)
         
         if (user) {
           // If the user exists, update their access token
@@ -43,7 +43,7 @@ passport.use(
 // Serialize and deserialize user for session management
 passport.serializeUser((user, done) => {
   console.log('user from serializeUser: ', user.id)
-  done(null, user._id.valueOf());  // Ensuring the user ID is stored in session
+  done(null, user.id);  // Ensuring the user ID is stored in session
   
 });
 

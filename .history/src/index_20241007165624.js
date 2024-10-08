@@ -36,9 +36,7 @@ app.use(cors({
 app.use(session({
   secret: process.env.GOOGLE_CLIENT_SECRET || 'your_session_secret',
   resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false } // Set to true if using HTTPS
-
+  saveUninitialized: true,
 }));
 app.use(passport.initialize());
 app.use(passport.session());

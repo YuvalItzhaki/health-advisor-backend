@@ -36,7 +36,7 @@ app.use(cors({
 app.use(session({
   secret: process.env.GOOGLE_CLIENT_SECRET || 'your_session_secret',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   cookie: { secure: false } // Set to true if using HTTPS
 
 }));
