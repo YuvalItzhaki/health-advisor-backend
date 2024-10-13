@@ -8,8 +8,8 @@ const healthRouter = require('./routes/health');
 const userRoutes = require('./routes/user');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const passport = require('./config/passport');
-const googleFitRoutes = require('./routes/googleFit');
+const passport = require('./config/passport'); // Import the configured passport
+// const passport = require('passport');
 
 const app = express();
 
@@ -46,14 +46,21 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/health', healthRouter);
 app.use('/api/users', userRoutes);
-app.use('/api/googleFit', googleFitRoutes);
-
 app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', "script-src 'self' https://apis.google.com; object-src 'none'");
   res.removeHeader('Cross-Origin-Opener-Policy');
   res.removeHeader('Cross-Origin-Embedder-Policy');
+  console.log('Session:', req.session);
+  console.log('User1111:', req.user); 
   next();
 });
+// app.use((req, res, next) => {
+//   res.removeHeader('Cross-Origin-Opener-Policy');
+//   res.removeHeader('Cross-Origin-Embedder-Policy');
+//   console.log('Session:', req.session);
+//   console.log('User1111:', req.user); 
+//   next();
+// });
 
 app.get('/', (req, res) => {
   res.send('API is running...');

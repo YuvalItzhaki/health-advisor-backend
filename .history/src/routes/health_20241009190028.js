@@ -3,6 +3,7 @@ const router = express.Router();
 const HealthData = require('../models/healthData'); 
 const { authenticateUser } = require('../middlewares/authMiddleware');
 const passport = require('passport');
+const axios = require('axios');
 
 
 
@@ -117,31 +118,40 @@ router.get('/google/:googleId', async (req, res) => {
 });
 
 // Example route for fetching Google Fit data
-router.get('/google-fit-data', passport.authenticate('session'),async (req, res) => {
+router.get('/google-fit-data', passport.authenticate('session'), async (req, res) => {
   try {
     // Check if user is authenticated and has accessToken
+    console.log('User object for google-fit-data:', req.user);
     if (!req.user || !req.user.accessToken) {
       return res.status(401).json({ message: 'Unauthorized: No access token' });
     }
 
     const accessToken = req.user.accessToken; // Retrieve the token from user session or DB
     console.log('accessToken is:', accessToken); // Debug to ensure token is correct
+    const startTimeMillis = new Date('2024-01-01').getTime(); // January 1st, 2024
+    const endTimeMillis = new Date().getTime(); // Current time
 
     // Request data from Google Fit API
-    const response = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
+    const response = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataSources:aggregate', {
       headers: {
-        'Authorization': `Bearer ${accessToken}` // Pass the token here
+        'Authorization': `Bearer ${accessToken}` // Corrected the template literal
       },
       params: {
-        "aggregateBy": [{
-          "dataTypeName": "com.google.step_count.delta"
-        }],
-        "bucketByTime": { "durationMillis": 86400000 },
-        "startTimeMillis": new Date('2024-01-01').getTime(),
-        "endTimeMillis": new Date().getTime()
+        "aggregateBy": [
+          {
+            "dataTypeName": "com.google.step_count.delta",
+            "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas"
+          }
+        ],
+        "bucketByTime": {
+          "durationMillis": 86400000 // 1 day in milliseconds
+        },
+        "startTimeMillis": startTimeMillis,
+        "endTimeMillis": endTimeMillis
       }
     });
 
+    // Send response back to client
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching Google Fit data:', error);
@@ -151,6 +161,9 @@ router.get('/google-fit-data', passport.authenticate('session'),async (req, res)
 
 router.get('/get-access-token', passport.authenticate('session'), async (req, res) => {
   try {
+    // Ensure user is authenticated and accessToken exists
+    // console.log('user is: ', req)
+    console.log('User object:', req.user);
     if (!req.user) {
       console.error('No user found in request');
       return res.status(401).json({ message: 'Unauthorized: No user in session' });
@@ -161,6 +174,7 @@ router.get('/get-access-token', passport.authenticate('session'), async (req, re
       return res.status(401).json({ message: 'Unauthorized: No access token' });
     }
 
+    // Send back the access token
     res.json({ accessToken: req.user.accessToken });
   } catch (error) {
     console.error('Error retrieving access token:', error);
