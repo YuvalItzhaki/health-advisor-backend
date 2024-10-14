@@ -4,8 +4,6 @@ const HealthData = require('../models/healthData');
 const { authenticateUser } = require('../middlewares/authMiddleware');
 const passport = require('passport');
 const axios = require('axios');
-const mongoose = require('mongoose');
-
 
 
 
@@ -169,6 +167,8 @@ router.get('/google/:googleId', async (req, res) => {
 //     res.status(500).json({ message: 'Error retrieving access token' });
 //   }
 // });
+
+
 
 
 router.get('/:userType/:id', authenticateUser, async (req, res) => {

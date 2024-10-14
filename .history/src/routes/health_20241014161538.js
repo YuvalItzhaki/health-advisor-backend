@@ -171,6 +171,8 @@ router.get('/google/:googleId', async (req, res) => {
 // });
 
 
+
+
 router.get('/:userType/:id', authenticateUser, async (req, res) => {
   const { userType, id } = req.params; // userType can be 'google' or 'user'
   console.log('i am hereeeee')

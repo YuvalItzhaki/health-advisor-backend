@@ -11,13 +11,16 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        // Check if the user already exists in the database
         let user = await User.findOne({ googleId: profile.id });
+        // console.log('user from GoogleStrategy is: ', user._id.valueOf())
         
         if (user) {
-          user.accessToken = accessToken;
+          // If the user exists, update their access token
+          user.accessToken = accessToken; // Save the new access token
           await user.save();
           console.log('Updated user with new access token:', user.accessToken);
-          return done(null, user);
+          return done(null, user); // Return the updated user
         }
 
         // If the user does not exist, create a new user and save the access token
@@ -25,13 +28,13 @@ passport.use(
           googleId: profile.id,
           displayName: profile.displayName,
           email: profile.emails[0].value,
-          accessToken,
+          accessToken, // Save the access token for the new user
         });
         console.log('New user created with access token:', user.accessToken);
         await user.save();
         done(null, user); // Return the new user
       } catch (error) {
-        done(error, false);
+        done(error, false); // Handle any errors during the process
       }
     }
   )

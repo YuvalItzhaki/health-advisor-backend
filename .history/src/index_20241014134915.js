@@ -13,6 +13,7 @@ const googleFitRoutes = require('./routes/googleFit');
 
 const app = express();
 
+// Connect to the database
 connectDB();
 const allowedOrigins = ['http://localhost:5173']; // Add all allowed origins here
 
@@ -44,6 +45,7 @@ app.use(cookieParser());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/health', healthRouter);
+app.use('/api', healthRouter);
 app.use('/api/users', userRoutes);
 app.use('/api/googleFit', googleFitRoutes);
 
